@@ -8,6 +8,7 @@ Movie recommendation and rating analysis using SQL.
 - [Features](#features)
 - [Project Structure](#project-structure)
 - [Database Schema](#database-schema)
+- [Data Sets](#data-sets)
 - [Setup Instructions](#setup-instructions)
 - [Usage](#usage)
 - [SQL Queries](#sql-queries)
@@ -19,7 +20,9 @@ Movie recommendation and rating analysis using SQL.
 
 ## Overview
 
-This project demonstrates the power of SQL for analyzing movie data and generating personalized recommendations. Using a comprehensive movie database with ratings, genres, and user preferences, the system applies SQL queries to uncover patterns and deliver data-driven movie suggestions.
+This project demonstrates the power of SQL for analyzing movie data and generating personalized recommendations. Using a comprehensive movie database with ratings, genres, and user preferences, this system leverages SQL queries to uncover patterns, generate insights, and provide intelligent movie recommendations based on user behavior and preferences.
+
+The project includes real-world datasets with movie information and user ratings, along with optimized SQL queries for various analytical purposes.
 
 ## Features
 
@@ -30,12 +33,16 @@ This project demonstrates the power of SQL for analyzing movie data and generati
 - ✅ **User Preference Tracking** - Track and analyze user viewing patterns
 - ✅ **Statistical Analysis** - Generate insights from rating distributions
 - ✅ **Performance Optimization** - Efficient queries for large datasets
+- ✅ **Real-world Datasets** - CSV data files with actual movie and rating information
 
 ## Project Structure
 
 ```
 sql-movie-recommendation/
 ├── README.md                 # Project documentation
+├── Data Sets/
+│   ├── movies_new.csv       # Movie metadata and information
+│   └── ratings.csv          # User ratings and review data
 ├── database/
 │   ├── schema.sql           # Database schema definition
 │   └── sample_data.sql      # Sample data for testing
@@ -79,12 +86,30 @@ sql-movie-recommendation/
 - `genre_name` - Genre name
 - `description` - Genre description
 
+## Data Sets
+
+This project includes real-world datasets in CSV format:
+
+### movies_new.csv
+- Contains comprehensive movie metadata and information
+- Size: ~490 KB
+- Includes movie titles, release years, genres, and other details
+- Ready for import into your SQL database
+
+### ratings.csv
+- Contains user ratings and review data
+- Size: ~369 KB
+- Includes rating values, timestamps, and user feedback
+- Links user preferences to specific movies
+
+Both datasets are located in the `Data Sets/` directory and can be imported directly into your SQL database.
+
 ## Setup Instructions
 
 ### Prerequisites
 - MySQL/PostgreSQL/SQL Server (or your preferred SQL database)
 - SQL client or command-line interface
-- Sample dataset (included)
+- Sample datasets (included in Data Sets/ folder)
 
 ### Installation
 
@@ -99,7 +124,26 @@ sql-movie-recommendation/
    mysql -u root -p < database/schema.sql
    ```
 
-3. **Load sample data**
+3. **Load datasets (CSV files)**
+   
+   For MySQL:
+   ```sql
+   LOAD DATA LOCAL INFILE 'Data Sets/movies_new.csv'
+   INTO TABLE movies
+   FIELDS TERMINATED BY ','
+   ENCLOSED BY '"'
+   LINES TERMINATED BY '\n'
+   IGNORE 1 ROWS;
+
+   LOAD DATA LOCAL INFILE 'Data Sets/ratings.csv'
+   INTO TABLE ratings
+   FIELDS TERMINATED BY ','
+   ENCLOSED BY '"'
+   LINES TERMINATED BY '\n'
+   IGNORE 1 ROWS;
+   ```
+
+   Alternatively, import via sample_data.sql:
    ```bash
    mysql -u root -p movie_db < database/sample_data.sql
    ```
@@ -145,6 +189,18 @@ ORDER BY similarity_score DESC
 LIMIT 10;
 ```
 
+### Get Top Rated Movies
+
+```sql
+-- Get top 10 highest rated movies with rating counts
+SELECT m.movie_id, m.title, AVG(r.rating) as avg_rating, COUNT(r.rating_id) as rating_count
+FROM movies m
+JOIN ratings r ON m.movie_id = r.movie_id
+GROUP BY m.movie_id, m.title
+ORDER BY avg_rating DESC, rating_count DESC
+LIMIT 10;
+```
+
 ## SQL Queries
 
 The project includes comprehensive SQL queries for:
@@ -167,15 +223,17 @@ See `docs/QUERIES.md` for detailed query documentation and examples.
 - Genre popularity trends
 - User engagement metrics
 - Rating correlation analysis
+- Top performing movies and genres
 
 *Note: Results will vary based on your dataset*
 
 ## Technologies Used
 
 - **SQL** - Core query language
-- **MySQL/PostgreSQL** - Database management systems
+- **MySQL/PostgreSQL/SQL Server** - Database management systems
 - **Database Design** - Schema optimization and normalization
 - **Query Optimization** - Performance tuning and indexing
+- **CSV Data Import** - Data loading and transformation
 
 ## Contributing
 
@@ -194,6 +252,7 @@ Contributions are welcome! Please feel free to:
 - Extended analysis queries
 - Documentation improvements
 - Test cases and data validation
+- New datasets and examples
 
 ## License
 
@@ -203,7 +262,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **Lakshmi Palayat**
 - GitHub: [@lakshmipalayat](https://github.com/lakshmipalayat)
-- Email: [Your Email]
+- Repository: [sql-movie-recommendation](https://github.com/lakshmipalayat/sql-movie-recommendation)
 
 ---
 
@@ -213,7 +272,8 @@ If you encounter any issues or have questions:
 
 1. Check the documentation in `docs/QUERIES.md`
 2. Review the sample queries in `queries/`
-3. Open an issue on GitHub
-4. Feel free to contribute improvements
+3. Examine the datasets in `Data Sets/`
+4. Open an issue on GitHub
+5. Feel free to contribute improvements
 
 **Happy analyzing! 🎬📊**
